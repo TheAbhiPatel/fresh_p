@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+
+  database:
+    image: mongo
+    ports:
+      - 27017:27017
+    container_name: mongodb-container
+    networks:
+      - fresh-opt-network
+    volumes:
+      - mongoData:/data/db
+
+
+  server:
+
+    build: ./server
+    ports:
+      - 3991:3991
+    container_name: server-container
+    networks:
+      - fresh-opt-network
+    volumes:
+      - ./server:/app
+    env_file:
+      - .env
+    depends_on:
+      - database 
+
+networks:
+  fresh-opt-network:
+
+volumes:
+  mongoData:
