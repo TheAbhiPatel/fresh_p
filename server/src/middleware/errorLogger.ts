@@ -3,13 +3,15 @@ import errorModel from "../models/error.model";
 
 const errorLogger: ErrorRequestHandler = async (err, req, res, next) => {
   try {
-    const userId = res.locals.user.id;
+    const userId = res.locals?.user?.id;
+    const reqMethod = req.method;
     const reqPath = req.path;
     const errorName = err.name;
     const errorMessage = err.message;
 
     const newError = await errorModel.create({
       userId,
+      reqMethod,
       reqPath,
       errorName,
       errorMessage,
@@ -18,8 +20,8 @@ const errorLogger: ErrorRequestHandler = async (err, req, res, next) => {
       success: false,
       errorName: err.name,
       errorMessage: err.message,
-      newError,
     });
+    console.log("--||----||------>>>", err);
   } catch (error) {
     console.log(error);
     res.status(500).json({
