@@ -1,4 +1,4 @@
-import { Response, Request } from "express";
+import { Response, Request, RequestHandler } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import userModel from "../models/userModel";
@@ -6,16 +6,16 @@ import { JWT_SECRET, SEND_EMAIL_JWT_SECRET } from "../config";
 import sendEMail from "../utils/sendEMail";
 import { verifyJwt } from "../utils/verifyJwt";
 
-export const getUser = async (req: Request, res: Response) => {
+export const getUser: RequestHandler = async (req, res, next) => {
   try {
     const user = await userModel.find({}, { password: 0 });
     res.status(200).json({ success: true, user });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Something went wrong" });
+    next(error);
   }
 };
 
-export const signupUser = async (req: Request, res: Response) => {
+export const signupUser: RequestHandler = async (req, res, next) => {
   const { name, email, password } = req.body;
   try {
     const user = await userModel.findOne({ email });
@@ -44,11 +44,11 @@ export const signupUser = async (req: Request, res: Response) => {
       verificationURL: PreviewUrl,
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Something went wrong" });
+    next(error);
   }
 };
 
-export const loginUser = async (req: Request, res: Response) => {
+export const loginUser: RequestHandler = async (req, res, next) => {
   const { email, password } = req.body;
 
   try {
@@ -78,11 +78,11 @@ export const loginUser = async (req: Request, res: Response) => {
       token,
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Something went wrong" });
+    next(error);
   }
 };
 
-export const resendVericationEmail = async (req: Request, res: Response) => {
+export const resendVericationEmail: RequestHandler = async (req, res, next) => {
   const { email } = req.body;
   try {
     const user = await userModel.findOne({ email });
@@ -104,13 +104,11 @@ export const resendVericationEmail = async (req: Request, res: Response) => {
       .status(200)
       .json({ success: true, message: "Verification email sent", PreviewUrl });
   } catch (error) {
-    console.log(error);
-
-    res.status(500).json({ success: false, message: "Something went wrong" });
+    next(error);
   }
 };
 
-export const verifyEmail = async (req: Request, res: Response) => {
+export const verifyEmail: RequestHandler = async (req, res, next) => {
   const { token } = req.query;
 
   try {
@@ -141,10 +139,10 @@ export const verifyEmail = async (req: Request, res: Response) => {
       .status(200)
       .json({ success: true, message: "Email verified successfully" });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Something went wrong" });
+    next(error);
   }
 };
-export const sendForgetPassEmail = async (req: Request, res: Response) => {
+export const sendForgetPassEmail: RequestHandler = async (req, res, next) => {
   const { email } = req.body;
   try {
     const user = await userModel.findOne({ email });
@@ -169,11 +167,11 @@ export const sendForgetPassEmail = async (req: Request, res: Response) => {
       PreviewUrl,
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Something went wrong" });
+    next(error);
   }
 };
 
-export const resetPassword = async (req: Request, res: Response) => {
+export const resetPassword: RequestHandler = async (req, res, next) => {
   const { password } = req.body;
   const { token } = req.query;
 
@@ -202,16 +200,14 @@ export const resetPassword = async (req: Request, res: Response) => {
       message: "Password reset successfully",
     });
   } catch (error) {
-    console.log(error);
-
-    res.status(500).json({ success: false, message: "Something went wrong" });
+    next(error);
   }
 };
 
 // ================================================
-export const newFunc = async (req: Request, res: Response) => {
+export const newFunc: RequestHandler = async (req, res, next) => {
   try {
   } catch (error) {
-    res.status(500).json({ success: false, message: "Something went wrong" });
+    next(error);
   }
 };

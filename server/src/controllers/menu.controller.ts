@@ -1,10 +1,10 @@
-import { Request, Response } from "express";
+import { Request, RequestHandler, Response } from "express";
 import { menuModel } from "../models/menu.model";
 import { catModel } from "../models/category.model";
 import { subCatModel } from "../models/subCategory.model";
 import { menuMessage } from "../utils/responseMessage";
 
-export const getAllMenus = async (req: Request, res: Response) => {
+export const getAllMenus: RequestHandler = async (req, res, next) => {
   const user = res.locals.user;
   try {
     const menu = await menuModel.find({ userId: user.id });
@@ -30,14 +30,11 @@ export const getAllMenus = async (req: Request, res: Response) => {
       subCategory,
     });
   } catch (error) {
-    console.log(error);
-    res
-      .status(500)
-      .json({ success: false, message: menuMessage.catchBlockError });
+    next(error);
   }
 };
 
-export const getMenu = async (req: Request, res: Response) => {
+export const getMenu: RequestHandler = async (req, res, next) => {
   const user = res.locals.user;
   const menuId = req.params.id;
   try {
@@ -65,14 +62,11 @@ export const getMenu = async (req: Request, res: Response) => {
       subCategory,
     });
   } catch (error) {
-    console.log(error);
-    res
-      .status(500)
-      .json({ success: false, message: menuMessage.catchBlockError });
+    next(error);
   }
 };
 
-export const postMenu = async (req: Request, res: Response) => {
+export const postMenu: RequestHandler = async (req, res, next) => {
   const userId = res.locals.user.id;
   const body: any = req.body?.previewData;
   // const body: any = req.body;
@@ -178,16 +172,13 @@ export const postMenu = async (req: Request, res: Response) => {
       savedCategory,
     });
   } catch (error) {
-    console.log(error);
-    res
-      .status(500)
-      .json({ success: false, message: menuMessage.catchBlockError });
+    next(error);
   }
 };
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-export const updateMenu = async (req: Request, res: Response) => {
+export const updateMenu: RequestHandler = async (req, res, next) => {
   const userId = res.locals.user.id;
   const body = req.body;
 
@@ -249,16 +240,13 @@ export const updateMenu = async (req: Request, res: Response) => {
       message: menuMessage.menuUpdated,
     });
   } catch (error) {
-    console.log(error);
-    res
-      .status(500)
-      .json({ success: false, message: menuMessage.catchBlockError });
+    next(error);
   }
 };
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-export const deleteMenu = async (req: Request, res: Response) => {
+export const deleteMenu: RequestHandler = async (req, res, next) => {
   const user = res.locals.user;
   const menuId = req.params.id;
   try {
@@ -297,9 +285,6 @@ export const deleteMenu = async (req: Request, res: Response) => {
       subCategory,
     });
   } catch (error) {
-    console.log(error);
-    res
-      .status(500)
-      .json({ success: false, message: menuMessage.catchBlockError });
+    next(error);
   }
 };

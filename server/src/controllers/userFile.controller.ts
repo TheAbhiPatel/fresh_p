@@ -1,10 +1,10 @@
-import { Request, Response } from "express";
+import { Request, RequestHandler, Response } from "express";
 import { MulterError } from "multer";
 import { upload } from "../utils/upload";
 import { userFileModel } from "../models/userFiles.model";
 import { APP_URL_FOR_PUBLIC_FILE } from "../config";
 
-export const uploadFile = async (req: Request, res: Response) => {
+export const uploadFile: RequestHandler = async (req, res, next) => {
   upload(req, res, async function (err) {
     if (err instanceof MulterError) {
       console.log("hey this is multer Error ...........", err);
@@ -41,13 +41,12 @@ export const uploadFile = async (req: Request, res: Response) => {
 
       res.status(200).json({ success: true, message: "Files uploaded" });
     } catch (error) {
-      console.log(error);
-      res.status(500).json({ success: false, message: "Something went wrong" });
+      next(error);
     }
   });
 };
 
-export const getFiless = async (req: Request, res: Response) => {
+export const getFiless: RequestHandler = async (req, res, next) => {
   try {
     const userId = res.locals.user.id;
     const { subCategoryId } = req.body;
@@ -67,7 +66,6 @@ export const getFiless = async (req: Request, res: Response) => {
 
     res.status(200).json({ success: true, message: "File fetched", fileUrls });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ success: false, message: "Something went wrong" });
+    next(error);
   }
 };
