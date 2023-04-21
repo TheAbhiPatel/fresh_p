@@ -1,6 +1,18 @@
 import { RequestHandler } from "express";
 import userModel from "../models/userModel";
 
+// /**
+//  * @openapi
+//  * /api/get-me:
+//  *  get:
+//  *     tags:
+//  *     - getMe
+//  *     description: Responds if the app is up and running
+//  *     responses:
+//  *       200:
+//  *         description: App is up and running
+//  */
+
 export const getMe: RequestHandler = async (req, res, next) => {
   const id = req.params.id;
   try {
