@@ -1,9 +1,9 @@
 import express from "express";
-import { getFiless, uploadFile } from "../controllers/userFile.controller";
+import { getFiles, uploadFile } from "../controllers/userFile.controller";
 
 const router = express.Router();
 
-router.get("/", getFiless);
+router.get("/:id", getFiles);
 router.post("/", uploadFile);
 
 export default router;
