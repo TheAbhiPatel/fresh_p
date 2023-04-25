@@ -8,7 +8,7 @@ const validateToken = async (req: Request, res: Response) => {
   try {
     if (!token)
       return res
-        .status(401)
+        .status(404)
         .json({ success: false, message: "Token not found" });
     const isValidate = verifyJwt<{ id: string }>(token, JWT_SECRET);
     if (!isValidate)
@@ -18,7 +18,7 @@ const validateToken = async (req: Request, res: Response) => {
     const user = await userModel.findById(isValidate.id);
     if (!user)
       return res
-        .status(401)
+        .status(404)
         .json({ success: false, message: "User does not exists" });
     res
       .status(200)

@@ -46,11 +46,11 @@ export const uploadFile: RequestHandler = async (req, res, next) => {
   });
 };
 
-export const getFiless: RequestHandler = async (req, res, next) => {
+export const getFiles: RequestHandler = async (req, res, next) => {
   try {
     const userId = res.locals.user.id;
-    const { subCategoryId } = req.body;
-    const userFiles = await userFileModel.find({ userId, subCategoryId });
+    const { id } = req.params;
+    const userFiles = await userFileModel.find({ userId, subCategoryId: id });
     if (userFiles.length == 0)
       return res.status(404).json({
         success: false,

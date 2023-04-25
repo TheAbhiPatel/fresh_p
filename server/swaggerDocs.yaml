@@ -1,0 +1,663 @@
+openapi: 3.0.3
+info:
+  title: REMOTE-PRESENTATION_API's Documentation
+  description: This is full api documentation available for OPT project
+  version: '1.0'
+  
+  
+servers:
+    - url : http://localhost:3991/api
+tags:
+  - name : Home
+    description: for home route testing
+  - name : Auth
+    description: all user authentication routes
+  - name : Menu 
+    description: all menus categories and subCategories related routes
+  - name : File
+    description: all user files related routes
+  
+
+    
+paths:
+
+  /:
+    get:
+      security: 
+        - AuthToken: []
+      tags:
+        - Home
+      summary: get home route
+      responses:
+        '200':
+          description: Successful Response 
+        '400':
+          description: Bad request
+        '404':
+          description:  Not found
+        "500":
+          description: Internal server error 
+
+  /auth/signup:
+    post:
+      tags:
+        - Auth
+      summary: signup user 
+      requestBody:
+        description: user details require for signup
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Signup'
+        required: true
+      responses:
+        '201':
+          description: Successful Response 
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message: 
+                    example : "User registered successfully, Please verify your Email"
+        "403":
+          description: Forbidden
+        "422":
+          description: Unprocessable Entity
+        "500":
+          description: Internal server error 
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: login for user
+      requestBody:
+        description: user details require for login 
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+        required: true
+      responses:
+        '200':
+          description: Successful Response 
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    example: true
+                  message:
+                    example: Logged in successfully
+                  token: 
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiVGVzdCIsImVtYWlsIjoidGVzdEBnbWFpbC5jb20iLCJpZCI6IjY0MmU1YzU2ZWM0MmMzYzgyMWM3MmQ1MSIsImlhdCI6MTY4MjA2Mzg4MCwiZXhwIjoxNjgyNDk1ODgwfQ.n31j-XQlUmcMw6nixDLIgDNzTuZOnXsRmOO4gVnxMR4
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not found
+        "422":
+          description: Unprocessable Entity
+        "500":
+          description: Internal server error 
+
+  /auth/verify-email:
+    post:
+      tags:
+        - Auth
+      summary: for verification of email 
+      parameters:
+        - name: token
+          in: query
+          required: true
+          schema:
+            type: string
+            default: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiVGVzdCIsImVtYWlsIjoidGVzdEBnbWFpbC5jb20iLCJpZCI6IjY0MmU1YzU2ZWM0MmMzYzgyMWM3MmQ1MSIsImlhdCI6MTY4MjA2Mzg4MCwiZXhwIjoxNjgyNDk1ODgwfQ.n31j-XQlUmcMw6nixDLIgDNzTuZOnXsRmOO4gVnxMR4
+      responses:
+        "200":
+          description: Successful Response 
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  success:
+                    example: true
+                  message: 
+                    example : "Email verified successfully"
+        "403":
+          description: Forbidden
+        "404":
+          description: Not found
+        "422":
+          description: Unprocessable Entity
+        "500":
+          description: Internal server error 
+
+  /auth/resend-verification-email:
+    post: 
+      tags:
+        - Auth
+      summary: for resend verification email
+      requestBody:
+        description: details require for the user 
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email :
+                  example : test@gmail.com
+      responses:
+        "200":
+          description: Successful Response 
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: 
+                    example: true
+                  message:
+                    example: Email sent successfully
+        "403":
+          description: Forbidden
+        "404":
+          description: Not found
+        "422":
+          description: Unprocessable Entity
+        "500":
+          description: Internal server error 
+
+  /auth/forget-password-email:
+    post: 
+      tags:
+        - Auth
+      summary: send email for forget password
+      requestBody:
+        description: details require for the user 
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email :
+                  example : test@gmail.com
+      responses:
+        "200":
+          description: Successful Response 
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: 
+                    example: true
+                  message:
+                    example: Email sent successfully  
+        "403":
+          description: Forbidden
+        "404":
+          description: Not found
+        "422":
+          description: Unprocessable Entity
+        "500":
+          description: Internal server error 
+
+  /auth/reset-password:
+    post: 
+      tags:
+        - Auth
+      summary: for  reset password 
+      parameters:
+        - name: token
+          in : query
+          required: true
+          schema: 
+            type: string
+            default: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiVGVzdCIsImVtYWlsIjoidGVzdEBnbWFpbC5jb20iLCJpZCI6IjY0MmU1YzU2ZWM0MmMzYzgyMWM3MmQ1MSIsImlhdCI6MTY4MjA2Mzg4MCwiZXhwIjoxNjgyNDk1ODgwfQ.n31j-XQlUmcMw6nixDLIgDNzTuZOnXsRmOO4gVnxMR4
+      requestBody:
+        description: details require for the user 
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password :
+                  example : "123456"
+        required: true
+      responses:
+        "200":
+          description: Successful Response --->
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: 
+                    example: true
+                  message:
+                    example: Password reset successfully
+        "403":
+          description: Forbidden
+        "404":
+          description: Not found
+        "422":
+          description: Unprocessable Entity
+        "500":
+          description: Internal server error 
+
+  /validate-token:
+    get:
+      tags:
+        - Auth
+      summary: for token validation  
+      parameters:
+        - name: token
+          in: query
+          required: true
+          schema:
+            type: string
+            default: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiVGVzdCIsImVtYWlsIjoidGVzdEBnbWFpbC5jb20iLCJpZCI6IjY0MmU1YzU2ZWM0MmMzYzgyMWM3MmQ1MSIsImlhdCI6MTY4MjA2Mzg4MCwiZXhwIjoxNjgyNDk1ODgwfQ.n31j-XQlUmcMw6nixDLIgDNzTuZOnXsRmOO4gVnxMR4
+      responses:
+        "200":
+          description: Successful Response 
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  success:
+                    example: true
+                  message: 
+                    example : "Token validate successfully"
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not found
+        "422":
+          description: Unprocessable Entity
+        "500":
+          description: Internal server error 
+
+  /menu:
+    post:
+      security: 
+        - AuthToken: []
+      tags:
+        - Menu
+      summary: post all menus categories and subCategories
+      requestBody:
+        description: menus and categories and subCategories are required
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostMenu"
+        required: true
+      responses:
+        "201":
+          description: Successful Response --->
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  success:
+                    example: true
+                  message: 
+                    example : "Menu added successfully"
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "422":
+          description: Unprocessable Entity
+        "500":
+          description: Internal server error
+
+    get:
+      security: 
+        - AuthToken: []
+      tags:
+        - Menu
+      summary: get all user specific menus with it's categories and subCategories 
+      responses:
+        "200":
+          description: Successful Response --->
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  success:
+                    example: true
+                  message: 
+                    example : "Menus fetched successfully"
+                  menu:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Menu'
+                  cateogry:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Category'
+                  subCategory:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SubCategory'
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not found
+        "500":
+          description: Internal server error
+
+  /menu/{id}:
+    get:
+      security: 
+        - AuthToken: []
+      tags:
+        - Menu
+      summary: get only one  menu and it's categories and subCategories 
+      parameters: 
+        - name: id
+          in : path
+          description: menu id required for fetch single menu
+          required: true
+          schema:
+            type: string
+            example: 642e5b9ea31b5b32258ce1ac
+      responses:
+        "200":
+          description: Successful Response --->
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  success:
+                    example: true
+                  message: 
+                    example : "Menu fetched successfully"
+                  menu:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Menu'
+                  cateogry:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Category'
+                  subCategory:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SubCategory'
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not found
+        "500":
+          description: Internal server error
+
+    delete:
+      security: 
+        - AuthToken: []
+      tags:
+        - Menu
+      summary: delete only one  menu and it's categories and subCategories 
+      parameters: 
+        - name: id
+          in : path
+          description: menu id required for delete single menu with  it's categories and subCategories
+          required: true
+          schema:
+            type: string
+            example: 642e5b9ea31b5b32258ce1ac
+      responses:
+        "200":
+          description: Successful Response --->
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  success:
+                    example: true
+                  message: 
+                    example : "Menu deleted successfully"
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not found
+        "500":
+          description: Internal server error
+
+  /file/{id}:                 
+    get:
+      security: 
+        - AuthToken: []
+      tags:
+        - File
+      summary: get  user specific files on the basis of  subCategoryId 
+      parameters: 
+        - name: id
+          in : path
+          description: subCategoryId id required for get files
+          required: true
+          schema:
+            type: string
+            example: 642e5b9ea31b5b32258ce1ac
+      responses:
+        "200":
+          description: Successful Response --->
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  success:
+                    example: true
+                  message: 
+                    example : "File fetched successfully"
+                  fileUrls:
+                    type: array
+                    items:
+                      example: http://192.168.1.13:3991/user/images/1682075501550-pexels-pixabay-248747.jpg
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not found
+        "500":
+          description: Internal server error
+
+  /file:                 
+    post:
+      security: 
+        - AuthToken: []
+      tags:
+        - File
+      summary: post  multifile files
+      requestBody:
+        description: these are require field for upload files
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                menuId:
+                  type: string
+                  example: 642e5b9ea31b5b32258ce1ac
+                categoryId:
+                  type: string
+                  example: 642e5b9ea31b5b32258ce1ac
+                subCategoryId:
+                  type: string
+                  example: 642e5b9ea31b5b32258ce1ac
+                files:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                
+        required: true
+      responses:
+        "200":
+          description: Successful Response --->
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  success:
+                    example: true
+                  message: 
+                    example : "File uploded "
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "422":
+          description: Unprocessable Entity
+        "500":
+          description: Internal server error             
+
+
+components:
+  securitySchemes:
+    AuthToken: 
+      type: http
+      scheme: Bearer
+
+  schemas:
+    Signup:
+      type: object
+      properties:
+        name:
+          type: string
+          example: jone doe
+        email:
+          type: string
+          example: test@gmail.com
+        password:
+          type: string
+          example: "123456"
+      required:
+        - name
+        - email
+        - password
+    Login:
+      type: object
+      properties:
+        email:
+          type: string
+          example: test@gmail.com
+        password:
+          type: string
+          example: "123456"
+    PostMenu:
+      type: object
+      properties:
+        menu: 
+          type: array
+          items:
+            $ref: '#/components/schemas/Menu'
+        category:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+        subCategory:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubCategory'
+    Menu:
+      type: object
+      properties:
+        connectId: 
+          type: string 
+          example: nH-qAiTdGaBhOJiKi3dMP
+        name: 
+          type: string 
+          example: Menu 1
+        label: 
+          type: string 
+          example: Menu 1
+        value: 
+          type: string 
+          example: msection-1
+        password: 
+          type: string 
+          example: "1234"
+        isProtected: 
+          type: boolean 
+          example: true
+        isSelected: 
+          type: boolean 
+          example: true
+    Category:
+      type: object
+      properties:
+        connectId: 
+          type: string 
+          example: jCIb3oEBMRmKpRQ7eEIKE
+        connectMenuId: 
+          type: string 
+          example: nH-qAiTdGaBhOJiKi3dMP
+        name: 
+          type: string 
+          example: Menu 1 Category 1
+        label: 
+          type: string 
+          example: Category 1
+        value: 
+          type: string 
+          example: catsec-1
+        isSelected: 
+          type: boolean 
+          example: false
+    SubCategory:
+      type: object
+      properties:
+        connectId:
+          type: string
+          example: nH-qAiTdGaBhOJiKi3dMPjCIb3oEBMRmKpRQ7eEIKE
+        connectMenuId:
+          type: string
+          example: nH-qAiTdGaBhOJiKi3dMP
+        connectCategoryId:
+          type: string
+          example: jCIb3oEBMRmKpRQ7eEIKE
+        subcategories:
+          type: array
+          items:
+            $ref: '#/components/schemas/Subcategories'
+    Subcategories:
+      type: object
+      properties:
+        connectId:
+          type: string
+          example: nH-qAiTdGaBhOJiKi3dMPjCIb3oEBMRmKpRQ7eEIKE1
+        name: 
+          type: string 
+          example:  Menu 1 Category 1 Sub Category 1
+        label: 
+          type: string 
+          example: Sub Category 1
+        value: 
+          type: string 
+          example: scatsec-1
+
+
+
